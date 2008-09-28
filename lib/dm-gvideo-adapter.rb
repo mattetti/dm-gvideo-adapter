@@ -4,8 +4,7 @@ rescue LoadError
   require 'rubygems'
 end
 require 'dm-core'
-require 'hpricot'
-require 'open-uri'
+require 'gvideo'
 
 module DataMapper
   module Adapters

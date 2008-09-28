@@ -5,7 +5,7 @@ require 'date'
 
 GEM = "dm-gvideo-adapter"
 GEM_VERSION = "0.0.1"
-AUTHOR = "Matt Aimonetti & Yehuda Katz"
+AUTHOR = "Matt Aimonetti"
 EMAIL = "mattaimonetti@gmail.com"
 HOMEPAGE = "http://merbist.com"
 SUMMARY = "A gem that provides..."

@@ -1,4 +1,17 @@
 dm-gvideo-adapter
 =================
 
-A gem that provides...
+# dependencies
+Gvideo: http://github.com/mattetti/gvideo
+
+Usage:
+
+# URI:
+googlevideo://A005148908335059515423 # google video user id
+
+Video.all # returns all the user's videos
+Video.get("-2838281997424715962")
+Video.first(:title => "The Illuminati - Secret societies")
+Video.all(:title.like => "%Illuminati%")
+Video.all(:duration.gte => 360)
+Video.all(:duration.gte => 60, :duration.lte => 360)

@@ -67,18 +67,18 @@ module DataMapper
         # in the proper order
         def props_from_result(properties_with_indexes, result, repo)
           properties_with_indexes.inject([]) do |accum, (prop, idx)|
-            meth = obj_attr(prop, repo, result.class)
+            meth = prop.field(repo.name) if result.respond_to?(prop.field(repo.name))
             accum[idx] = result.send(meth)
             accum
           end
         end
         
-        # figures out the method to call to retrieve an object prop
-        def obj_attr(prop, repository, klass)
-          meth = klass.instance_methods.
-            grep(/^#{prop.field(repository.name)}$/i)
-          meth && !meth.empty? ? meth[0] : meth
-        end
+        # # figures out the method to call to retrieve an object prop
+        # def obj_attr(prop, repository, klass)
+        #   meth = klass.instance_methods.
+        #     grep(/^#{prop.field(repository.name)}$/i)
+        #   meth && !meth.empty? ? meth[0] : meth
+        # end
         
         def extract_options(query_conditions)
           options = {}

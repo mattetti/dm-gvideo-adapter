@@ -4,7 +4,7 @@ require 'rubygems/specification'
 require 'date'
 
 GEM = "dm-gvideo-adapter"
-GEM_VERSION = "0.0.1"
+GEM_VERSION = "1.0.0"
 AUTHOR = "Matt Aimonetti"
 EMAIL = "mattaimonetti@gmail.com"
 HOMEPAGE = "http://merbist.com"
@@ -23,7 +23,7 @@ spec = Gem::Specification.new do |s|
   s.homepage = HOMEPAGE
   
   # Uncomment this to add a dependency
-  # s.add_dependency "foo"
+  # s.add_dependency "gvideo"
   
   s.require_path = 'lib'
   s.autorequire = GEM

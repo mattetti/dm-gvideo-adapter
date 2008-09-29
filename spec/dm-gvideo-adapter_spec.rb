@@ -32,51 +32,61 @@ describe "dm-gvideo-adapter" do
       @videos.length.should == @gvideos.length
     end
     
-    it "should be able to retrieve itams using a title (string) condition" do
-      videos = @videos.all(:title => "Durex: The Garden")
+    it "should be able to retrieve items using a title (string) condition" do
+      videos = Video.all(:title => "Durex: The Garden")
       videos.length.should == 1
       videos.first.title.should == "Durex: The Garden"
     end
     
     it "should be able to retrieve items using a title (regexp) condition" do
-      videos = @videos.all(:title.like => "The Garden")
+      videos = Video.all(:title.like => "The Garden")
       videos.length.should == 1
       videos.first.title.should == "Durex: The Garden"
     end
     
     it "should be able to retrieve items using a duration (integer) condition (seconds)" do
-      videos = @videos.all(:duration => 12)
+      videos = Video.all(:duration => 12)
       videos.length.should == 2
     end
     
     it "should be able to retrieve items using a duration condition :gte " do
-      videos = @videos.all(:duration.gte => 13)
+      videos = Video.all(:duration.gte => 13)
       videos.length.should < @gvideos.length
     end
     
     it "should be able to retrieve items using a duration condition :lte " do
-      videos = @videos.all(:duration.lte => 12)
+      videos = Video.all(:duration.lte => 12)
       videos.length.should < @gvideos.length
       (@videos.all(:duration.gte => 13).length + @videos.all(:duration.lte => 12).length).should == @gvideos.length
     end
     
     it "should be able to use 2 duration conditions" do
-      videos = @videos.all(:duration.lte => 12, :duration.gte => 12)
+      videos = Video.all(:duration.lte => 12, :duration.gte => 12)
       videos.length.should == @videos.all(:duration => 12).length
     end
     
   end
   
   describe "getting one resource" do
-    before(:all) do
-      @video = Video.first
-    end
     
     it "should have all the attributes of a video" do
+      video = Video.first
       methods = %W{docid title video_url duration duration_in_minutes thumbnail_url embed_player}
       methods.each do |meth|
-        @video.send(meth.to_sym).should_not be_nil
+        video.send(meth.to_sym).should_not be_nil
       end
+    end
+    
+    it "should be able to retrieve an item using a title (string) condition" do
+      video = Video.first(:title => "Durex: The Garden")
+      video.should be_an_instance_of(Video)
+      video.title.should == "Durex: The Garden"
+    end
+    
+    it "should be able to retrieve items using a title (regexp) condition" do
+      video = Video.first(:title.like => "The Garden")
+      video.should be_an_instance_of(Video)
+      video.title.should == "Durex: The Garden"
     end
     
   end

@@ -55,7 +55,7 @@ module DataMapper
           end
 
           # This is the core logic that handles the difference between all/first
-          (results || []).each do |result|
+          results.each do |result|
             props = props_from_result(properties_with_indexes, result, repository)
             arr ? set.load(props) : (break set.load(props, query))
           end

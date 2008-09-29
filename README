@@ -4,10 +4,22 @@ dm-gvideo-adapter
 # dependencies
 Gvideo: http://github.com/mattetti/gvideo
 
+install the dependency:
+  
+  $ sudo gem install mattetti-gvideo
+  
+install this adapter
+
+  $ sudo gem install mattetti-dm-gvideo-adapter
+  
+
 Usage:
 
 # URI:
 googlevideo://A005148908335059515423 # google video user id
+
+(or you can set the user_id in your database.yml)
+
 
 Video.all # returns all the user's videos
 Video.get("-2838281997424715962")

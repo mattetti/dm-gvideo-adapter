@@ -10,7 +10,14 @@ DataMapper.setup(:default, {
 
 class Video
   include DataMapper::Resource
-  include DataMapper::Resource::GvideoModel
+  
+  property :docid, String
+  property :title, String
+  property :video_url, String
+  property :duration, Integer
+  property :duration_in_minutes, String
+  property :thumbnail_url, String
+  property :embed_player, String
   
   
 end

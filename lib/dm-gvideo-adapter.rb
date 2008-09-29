@@ -67,38 +67,36 @@ module DataMapper
         
         def extract_options(query_conditions)
           options = {}
-          duration_range = {:min => nil, :max => nil}
+          duration_range = { :min => nil, :max => nil }
           duration_matcher = nil
-            query_conditions.each do |condition|
-              op, prop, value = condition
-              case prop.field
-                when "title"
-                  if op == :eql
-                    title_matcher = value
-                  elsif op == :like
-                    title_matcher = Regexp.new(value)
-                  end
-                  options.merge!({:title => title_matcher})
-                
-                when "duration"
-                  raise GvideoInterface::ConditionsError, "duration in seconds needs to be expressed using an Integer" unless value.is_a?(Integer)
-                  case op  
-                    when :eql then duration_matcher = value
-                    when :gte then duration_range[:min] = value
-                    when :lte then duration_range[:max] = value
-                    when :lt  then duration_range[:max] = value - 1
-                    when :gt  then duration_range[:min] = value + 1
-                  end
-                  
-                else 
-                  raise GvideoInterface::ConditionsError, "#{prop.field.to_sym} not supported as a condition"
+
+          query_conditions.each do |condition|
+            operator, property, value = condition
+            case property.name
+              when :title
+                case operator
+                  when :eql  then title_matcher = value
+                  when :like then title_matcher = Regexp.new(value)
                 end
-              end
-            
-            options.merge!({:duration => duration_matcher}) if duration_matcher
-            options.merge!({:duration => (duration_range[:min] || 0)..(duration_range[:max] || 9999) }) if (duration_range[:min] || duration_range[:max])
-        
-          return options
+                options.merge!(:title => title_matcher)
+              when :duration
+                raise GvideoInterface::ConditionsError, "duration in seconds needs to be expressed using an Integer" unless value.is_a?(Integer)
+                case operator
+                  when :eql then duration_matcher = value
+                  when :gte then duration_range[:min] = value
+                  when :gt  then duration_range[:min] = value + 1
+                  when :lte then duration_range[:max] = value
+                  when :lt  then duration_range[:max] = value - 1
+                end
+              else
+                raise GvideoInterface::ConditionsError, "#{property.name} not supported as a condition"
+            end
+          end
+
+          options.merge!(:duration => duration_matcher) if duration_matcher
+          options.merge!(:duration => (duration_range[:min] || 0)..(duration_range[:max] || 9999)) if duration_range[:min] || duration_range[:max]
+
+          options
         end
       
     end #GvideoAdapter

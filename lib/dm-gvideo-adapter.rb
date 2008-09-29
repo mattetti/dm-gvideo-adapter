@@ -42,11 +42,10 @@ module DataMapper
         # set = a Collection instance
         # arr boolean used to specify if the returned value should be an array or a single object instance
         def read(query, set, arr = true)
-          repository = query.repository
-          properties = query.fields
-          properties_with_indexes = Hash[*properties.zip((0...properties.size).to_a).flatten]
-
           options = extract_options(query.conditions)
+          
+          repository_name = query.repository.name
+          properties = query.fields
           
           begin
             results = @google_user.fetch_videos(options)
@@ -54,39 +53,22 @@ module DataMapper
             raise GvideoInterface::FetchError,  "Couldn't retrieve the videos"
           end
 
-          # This is the core logic that handles the difference between all/first
           results.each do |result|
-            props = props_from_result(properties_with_indexes, result, repository)
-            arr ? set.load(props) : (break set.load(props, query))
+            values = result_values(result, properties, repository_name)
+            # This is the core logic that handles the difference between all/first
+            arr ? set.load(values) : (break set.load(values, query))
           end
           
         end
-      
-        # extracts an array of values in the same order passed as the first argument
-        # a Collection instance needs to load an array of arrays with the attributes set
-        # in the proper order
-        def props_from_result(properties_with_indexes, result, repo)
-          properties_with_indexes.inject([]) do |accum, (prop, idx)|
-            meth = prop.field(repo.name) if result.respond_to?(prop.field(repo.name))
-            accum[idx] = result.send(meth)
-            accum
-          end
-        end
         
-        # # figures out the method to call to retrieve an object prop
-        # def obj_attr(prop, repository, klass)
-        #   meth = klass.instance_methods.
-        #     grep(/^#{prop.field(repository.name)}$/i)
-        #   meth && !meth.empty? ? meth[0] : meth
-        # end
+        def result_values(result, properties, repository_name)
+          properties.map { |p| result.send(p.field(repository_name)) }
+        end
         
         def extract_options(query_conditions)
           options = {}
           duration_range = {:min => nil, :max => nil}
           duration_matcher = nil
-          case query_conditions
-          when []
-          else
             query_conditions.each do |condition|
               op, prop, value = condition
               case prop.field
@@ -115,7 +97,6 @@ module DataMapper
             
             options.merge!({:duration => duration_matcher}) if duration_matcher
             options.merge!({:duration => (duration_range[:min] || 0)..(duration_range[:max] || 9999) }) if (duration_range[:min] || duration_range[:max])
-          end
         
           return options
         end
